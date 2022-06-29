@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import {Component, useState} from 'react';
 
 import Header from '../../components/Header';
 import api from '../../services/api';
@@ -6,6 +6,73 @@ import Food from '../../components/Food';
 import ModalAddFood from '../../components/ModalAddFood';
 import ModalEditFood from '../../components/ModalEditFood';
 import { FoodsContainer } from './styles';
+import {array} from "yup";
+
+
+interface DashboardProps {
+  foods: []
+  editingFood: object
+  modalOpen: boolean
+  editModalOpen: boolean
+}
+
+
+const Danshboard = ():JSX.Element => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [foods, setFoods] = useState()
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen)
+  }
+
+  const toggleEditModal = () => {
+    setIsEditModalOpen(!isEditModalOpen)
+  }
+
+  const handleAddFood = async (food) => {
+    const { foods } = food;
+    try {
+      const response = await api.post('/foods', {
+        ...food,
+        available: true,
+      });
+
+      setFoods({ foods: [...foods, response.data] })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  return (
+    <>
+      <Header openModal={toggleModal} />
+      <ModalAddFood
+        isOpen={isModalOpen}
+        setIsOpen={toggleModal}
+        handleAddFood={this.handleAddFood}
+      />
+      <ModalEditFood
+        isOpen={isEditModalOpen}
+        setIsOpen={toggleEditModal}
+        editingFood={editingFood}
+        handleUpdateFood={this.handleUpdateFood}
+      />
+
+      <FoodsContainer data-testid="foods-list">
+        {foods &&
+          foods.map(food => (
+            <Food
+              key={food.id}
+              food={food}
+              handleDelete={this.handleDeleteFood}
+              handleEditFood={this.handleEditFood}
+            />
+          ))}
+      </FoodsContainer>
+    </>
+  )
+}
 
 class Dashboard extends Component {
   constructor(props) {
@@ -66,18 +133,6 @@ class Dashboard extends Component {
     const foodsFiltered = foods.filter(food => food.id !== id);
 
     this.setState({ foods: foodsFiltered });
-  }
-
-  toggleModal = () => {
-    const { modalOpen } = this.state;
-
-    this.setState({ modalOpen: !modalOpen });
-  }
-
-  toggleEditModal = () => {
-    const { editModalOpen } = this.state;
-
-    this.setState({ editModalOpen: !editModalOpen });
   }
 
   handleEditFood = food => {
