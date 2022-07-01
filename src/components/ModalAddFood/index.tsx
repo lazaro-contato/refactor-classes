@@ -7,21 +7,21 @@ import Input from '../Input';
 
 interface ModalAddFoodProps {
   handleAddFood: () => void
+  setIsOpen: () => void
+  isOpen: boolean
 }
 
-const ModalAddFood = ({handleAddFood}: ModalAddFoodProps) => {
+const ModalAddFood = ({handleAddFood, setIsOpen, isOpen}: ModalAddFoodProps) => {
   const formRef = useRef(null)
-  const [isOpen, setIsOpen] = useState(false)
 
   const handleSubmit = () => {
 
   }
 
 
-
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <Form ref={this.formRef} onSubmit={this.handleSubmit}>
+      <Form ref={formRef} onSubmit={handleSubmit}>
         <h1>Novo Prato</h1>
         <Input name="image" placeholder="Cole o link aqui" />
 
