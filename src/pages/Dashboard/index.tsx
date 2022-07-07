@@ -1,12 +1,12 @@
-import {Component, useEffect, useState} from 'react';
+import {Component, useCallback, useEffect, useState} from 'react';
 
 import Header from '../../components/Header';
 import api from '../../services/api';
-import Food from '../../components/Food';
 import ModalAddFood from '../../components/ModalAddFood';
 import ModalEditFood from '../../components/ModalEditFood';
 import { FoodsContainer } from './styles';
-import {array} from "yup";
+import {FoodProps} from "../../types";
+import Food from '../../components/Food';
 
 
 interface DashboardProps {
@@ -20,7 +20,7 @@ interface DashboardProps {
 const Dashboard = ():JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [foods, setFoods] = useState()
+  const [foods, setFoods] = useState<FoodProps[]>([])
 
   useEffect(   () => {
       const fetchData = async () => {
@@ -31,32 +31,30 @@ const Dashboard = ():JSX.Element => {
         .catch(console.error)
   },[])
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen)
-  }
+  const toggleModal = useCallback(() => {
+      setIsModalOpen(!isModalOpen)
+  },[setIsModalOpen, isModalOpen])
 
-  const toggleEditModal = () => {
+  const toggleEditModal = useCallback(() => {
     setIsEditModalOpen(!isEditModalOpen)
-  }
+  },[setIsEditModalOpen, isEditModalOpen])
 
-  const handleAddFood = async (food) => {
-    const { foods } = food;
+
+  const handleAddFood = async (food: FoodProps) => {
     try {
       const response = await api.post('/foods', {
         ...food,
         available: true,
       });
 
-      setFoods({ foods: [...foods, response.data] })
+      if (response) setFoods([...foods, response.data])
     } catch (err) {
       console.log(err);
     }
   }
 
 
-  const handleUpdateFood = async (food) => {
-    const { foods, editingFood } = this.state;
-
+  const handleUpdateFood = async (food: FoodProps) => {
     try {
       const foodUpdated = await api.put(
         `/foods/${editingFood.id}`,
@@ -74,17 +72,11 @@ const Dashboard = ():JSX.Element => {
   }
 
   const handleDeleteFood = async id => {
-    const { foods } = this.state;
 
     await api.delete(`/foods/${id}`);
 
     const foodsFiltered = foods.filter(food => food.id !== id);
-
-    this.setState({ foods: foodsFiltered });
-  }
-
-  handleEditFood = food => {
-    this.setState({ editingFood: food, editModalOpen: true });
+    setFoods(foodsFiltered)
   }
 
   return (
@@ -93,7 +85,7 @@ const Dashboard = ():JSX.Element => {
       <ModalAddFood
         isOpen={isModalOpen}
         setIsOpen={toggleModal}
-        handleAddFood={handleAddFood}
+        handleAddFood={() => handleAddFood}
       />
       <ModalEditFood
         isOpen={isEditModalOpen}
