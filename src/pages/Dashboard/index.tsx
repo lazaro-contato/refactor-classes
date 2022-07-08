@@ -21,6 +21,7 @@ const Dashboard = ():JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [foods, setFoods] = useState<FoodProps[]>([])
+  const [editingFood, setEditingFood] = useState<FoodProps>()
 
   useEffect(   () => {
       const fetchData = async () => {
@@ -57,7 +58,7 @@ const Dashboard = ():JSX.Element => {
   const handleUpdateFood = async (food: FoodProps) => {
     try {
       const foodUpdated = await api.put(
-        `/foods/${editingFood.id}`,
+        `/foods/${editingFood?.id}`,
         { ...editingFood, ...food },
       );
 
@@ -65,18 +66,21 @@ const Dashboard = ():JSX.Element => {
         f.id !== foodUpdated.data.id ? f : foodUpdated.data,
       );
 
-     setFoods({ foods: foodsUpdated });
+     setFoods(foodsUpdated);
     } catch (err) {
       console.log(err);
     }
   }
 
-  const handleDeleteFood = async id => {
-
+  const handleDeleteFood = async (id: number) => {
     await api.delete(`/foods/${id}`);
-
     const foodsFiltered = foods.filter(food => food.id !== id);
     setFoods(foodsFiltered)
+  }
+
+  const handleEditFood = (food: FoodProps) => {
+    setEditingFood(food)
+    setIsEditModalOpen(true)
   }
 
   return (
@@ -90,8 +94,8 @@ const Dashboard = ():JSX.Element => {
       <ModalEditFood
         isOpen={isEditModalOpen}
         setIsOpen={toggleEditModal}
-        editingFood={editingFood}
-        handleUpdateFood={this.handleUpdateFood}
+        editingFood={editingFood as FoodProps}
+        handleUpdateFood={() => handleUpdateFood}
       />
 
       <FoodsContainer data-testid="foods-list">
@@ -100,8 +104,8 @@ const Dashboard = ():JSX.Element => {
             <Food
               key={food.id}
               food={food}
-              handleDelete={this.handleDeleteFood}
-              handleEditFood={this.handleEditFood}
+              handleDelete={() =>handleDeleteFood}
+              handleEditFood={() => handleEditFood}
             />
           ))}
       </FoodsContainer>

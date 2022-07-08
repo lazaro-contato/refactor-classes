@@ -5,11 +5,12 @@ import { Form } from './styles';
 import Modal from '../Modal';
 import Input from '../Input';
 import {FormHandles} from "@unform/core";
+import {FoodProps} from "../../types";
 
 interface ModalEditFoodProps {
   isOpen: boolean
   handleUpdateFood: (food: []) => void
-  editingFood: () => void
+  editingFood: FoodProps
   setIsOpen: (isOpen: boolean) => void
 }
 

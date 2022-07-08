@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
+
+export const Container = styled.div<{IsAvailable: boolean}>`
   background: #f0f0f5;
   border-radius: 8px;
 
@@ -12,8 +13,8 @@ export const Container = styled.div`
     transition: 0.3s opacity;
     text-align: center;
 
-    ${props =>
-    !props.available &&
+    ${IsAvailable =>
+    !IsAvailable &&
     css`
         opacity: 0.3;
       `};
