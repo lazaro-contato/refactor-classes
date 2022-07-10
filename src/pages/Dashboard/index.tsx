@@ -1,4 +1,4 @@
-import {Component, useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import Header from '../../components/Header';
 import api from '../../services/api';
@@ -7,15 +7,6 @@ import ModalEditFood from '../../components/ModalEditFood';
 import { FoodsContainer } from './styles';
 import {FoodProps} from "../../types";
 import Food from '../../components/Food';
-
-
-interface DashboardProps {
-  foods: []
-  editingFood: object
-  modalOpen: boolean
-  editModalOpen: boolean
-}
-
 
 const Dashboard = ():JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -42,6 +33,7 @@ const Dashboard = ():JSX.Element => {
 
 
   const handleAddFood = async (food: FoodProps) => {
+    console.log(food)
     try {
       const response = await api.post('/foods', {
         ...food,
@@ -56,6 +48,7 @@ const Dashboard = ():JSX.Element => {
 
 
   const handleUpdateFood = async (food: FoodProps) => {
+    console.log(food)
     try {
       const foodUpdated = await api.put(
         `/foods/${editingFood?.id}`,
@@ -79,6 +72,7 @@ const Dashboard = ():JSX.Element => {
   }
 
   const handleEditFood = (food: FoodProps) => {
+    console.log(food)
     setEditingFood(food)
     setIsEditModalOpen(true)
   }
@@ -89,23 +83,22 @@ const Dashboard = ():JSX.Element => {
       <ModalAddFood
         isOpen={isModalOpen}
         setIsOpen={toggleModal}
-        handleAddFood={() => handleAddFood}
+        handleAddFood={handleAddFood}
       />
       <ModalEditFood
         isOpen={isEditModalOpen}
         setIsOpen={toggleEditModal}
         editingFood={editingFood as FoodProps}
-        handleUpdateFood={() => handleUpdateFood}
+        handleUpdateFood={handleUpdateFood}
       />
-
       <FoodsContainer data-testid="foods-list">
         {foods &&
           foods.map(food => (
             <Food
               key={food.id}
               food={food}
-              handleDelete={() =>handleDeleteFood}
-              handleEditFood={() => handleEditFood}
+              handleDelete={handleDeleteFood}
+              handleEditFood={handleEditFood}
             />
           ))}
       </FoodsContainer>

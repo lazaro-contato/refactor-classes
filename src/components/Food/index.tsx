@@ -1,4 +1,4 @@
-import {Component, useState} from 'react';
+import {Component, useEffect, useState} from 'react';
 import { FiEdit3, FiTrash } from 'react-icons/fi';
 
 import { Container } from './styles';
@@ -8,11 +8,19 @@ import {FoodProps} from "../../types";
 interface FoodComponentProps {
   food: FoodProps
   handleEditFood: (food: FoodProps) => void
-  handleDelete: (food: FoodProps) => void
+  handleDelete: (id: number) => void
 }
 
 export const Food = ({food, handleEditFood, handleDelete}: FoodComponentProps): JSX.Element => {
   const [isAvailable, setIsAvailable] = useState<boolean>(false)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.get(`/foods/${food.id}`)
+      setIsAvailable(response.data.available)
+    }
+    fetchData()
+  },[])
 
   const setEditingFood = () => {
     handleEditFood(food)
@@ -54,7 +62,7 @@ export const Food = ({food, handleEditFood, handleDelete}: FoodComponentProps): 
           <button
             type="button"
             className="icon"
-            onClick={() => handleDelete(food)}
+            onClick={() => handleDelete(food.id)}
             data-testid={`remove-food-${food.id}`}
           >
             <FiTrash size={20} />

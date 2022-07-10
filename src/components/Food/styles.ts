@@ -4,6 +4,11 @@ import styled, { css } from 'styled-components';
 export const Container = styled.div<{IsAvailable: boolean}>`
   background: #f0f0f5;
   border-radius: 8px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
 
   header {
     background: #ffb84d;
@@ -12,21 +17,20 @@ export const Container = styled.div<{IsAvailable: boolean}>`
     overflow: hidden;
     transition: 0.3s opacity;
     text-align: center;
-
-    ${IsAvailable =>
-    !IsAvailable &&
-    css`
-        opacity: 0.3;
-      `};
+    opacity: ${({IsAvailable}) => IsAvailable ? 'inital' : '0.3'};
+    
+  ;
 
     img {
       pointer-events: none;
       user-select: none;
+      max-width: 100%;
     }
   }
 
   section.body {
     padding: 30px;
+    
 
     h2 {
       color: #3d3d4d;
@@ -34,7 +38,7 @@ export const Container = styled.div<{IsAvailable: boolean}>`
 
     p {
       color: #3d3d4d;
-
+      word-break: break-all;
       margin-top: 16px;
     }
 
