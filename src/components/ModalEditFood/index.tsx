@@ -18,7 +18,6 @@ const ModalEditFood = ({isOpen, handleUpdateFood, editingFood, setIsOpen}: Modal
   const formRef = useRef<FormHandles>(null)
 
   const handleSubmit = (food: FoodProps) => {
-    console.log(food)
     handleUpdateFood(food)
     setIsOpen(false)
   }

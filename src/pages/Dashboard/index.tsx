@@ -33,7 +33,6 @@ const Dashboard = ():JSX.Element => {
 
 
   const handleAddFood = async (food: FoodProps) => {
-    console.log(food)
     try {
       const response = await api.post('/foods', {
         ...food,
@@ -48,7 +47,6 @@ const Dashboard = ():JSX.Element => {
 
 
   const handleUpdateFood = async (food: FoodProps) => {
-    console.log(food)
     try {
       const foodUpdated = await api.put(
         `/foods/${editingFood?.id}`,
@@ -72,7 +70,6 @@ const Dashboard = ():JSX.Element => {
   }
 
   const handleEditFood = (food: FoodProps) => {
-    console.log(food)
     setEditingFood(food)
     setIsEditModalOpen(true)
   }
